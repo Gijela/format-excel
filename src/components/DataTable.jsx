@@ -3,9 +3,10 @@
    ║  - 全屏展示 Excel 数据                                         ║
    ║  - 显示运算结果列                                              ║
    ║  - 过滤低于阈值的数据                                          ║
+   ║  - 复制高价值数据供 AI 分析                                    ║
    ╚═══════════════════════════════════════════════════════════════╝ */
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { exportToExcel } from '../utils/excel'
 
 // ┌─────────────────────────────────────────────────────────────────┐
@@ -14,8 +15,11 @@ import { exportToExcel } from '../utils/excel'
 
 const FILTER_THRESHOLD = 500  // 低于此值的数据将被隐藏
 const HIGHLIGHT_THRESHOLD = 1000  // 高于此值的数据将高亮显示
+const COPY_THRESHOLD = 1000  // 复制时筛选的阈值
 
 export default function DataTable({ headers, rows, showResult, fileName }) {
+  const [copyStatus, setCopyStatus] = useState('')
+
   if (!rows || rows.length === 0) return null
 
   // ┌─────────────────────────────────────────────────────────────┐
@@ -38,6 +42,50 @@ export default function DataTable({ headers, rows, showResult, fileName }) {
   // └─────────────────────────────────────────────────────────────┘
 
   const handleExport = () => exportToExcel(headers, rows, '运算结果')
+
+  // ┌─────────────────────────────────────────────────────────────┐
+  // │  复制高价值数据（>1000）为 Markdown 表格格式                 │
+  // └─────────────────────────────────────────────────────────────┘
+
+  const handleCopyForAI = async () => {
+    const highValueRows = visibleRows.filter(r => r.__result > COPY_THRESHOLD)
+    
+    if (highValueRows.length === 0) {
+      setCopyStatus('无数据')
+      setTimeout(() => setCopyStatus(''), 2000)
+      return
+    }
+
+    // 构建 Markdown 表格
+    const allHeaders = [...headers, '运算结果']
+    const headerRow = '| ' + allHeaders.join(' | ') + ' |'
+    const separatorRow = '| ' + allHeaders.map(() => '---').join(' | ') + ' |'
+    
+    const dataRows = highValueRows.map(row => {
+      const values = headers.map(h => formatValue(row[h]))
+      values.push(formatValue(row.__result))
+      return '| ' + values.join(' | ') + ' |'
+    })
+
+    const markdown = [
+      `## SEO 关键词分析数据（运算结果 > ${COPY_THRESHOLD}）`,
+      '',
+      `共 ${highValueRows.length} 条高价值数据，请分析并推荐最适合获取 SEO 流量的关键词。`,
+      '',
+      headerRow,
+      separatorRow,
+      ...dataRows,
+    ].join('\n')
+
+    try {
+      await navigator.clipboard.writeText(markdown)
+      setCopyStatus('已复制')
+      setTimeout(() => setCopyStatus(''), 2000)
+    } catch {
+      setCopyStatus('复制失败')
+      setTimeout(() => setCopyStatus(''), 2000)
+    }
+  }
 
   // ┌─────────────────────────────────────────────────────────────┐
   // │  格式化数值显示                                              │
@@ -88,14 +136,30 @@ export default function DataTable({ headers, rows, showResult, fileName }) {
         </div>
 
         {showResult && (
-          <button className="btn-secondary flex items-center gap-1.5" onClick={handleExport}>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
-            导出全部
-          </button>
+          <div className="flex items-center gap-2">
+            {/* 复制按钮 */}
+            <button 
+              className="btn-secondary flex items-center gap-1.5"
+              onClick={handleCopyForAI}
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+              {copyStatus || `复制 >1000 (${stats?.above1000 || 0}条)`}
+            </button>
+
+            {/* 导出按钮 */}
+            <button className="btn-secondary flex items-center gap-1.5" onClick={handleExport}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+              导出全部
+            </button>
+          </div>
         )}
       </div>
 
