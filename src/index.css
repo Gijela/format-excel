@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ╔═══════════════════════════════════════════════════════════════╗
+   ║                    全局样式定义                                ║
+   ║  - 清爽的浅色主题                                              ║
+   ║  - 专注于数据展示                                              ║
+   ╚═══════════════════════════════════════════════════════════════╝ */
+
+:root {
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  卡片样式                                                      │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  表格样式 - 紧凑高效                                           │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.data-table {
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table th {
+  background: #f1f5f9;
+  border-bottom: 2px solid var(--accent-blue);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table tr:hover td {
+  background: #f8fafc;
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  输入框样式                                                    │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.input-field {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  按钮样式                                                      │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.btn-primary {
+  background: var(--accent-blue);
+  color: white;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  font-size: 14px;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  折叠面板动画                                                  │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.collapse-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.collapse-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.collapse-content.expanded {
+  max-height: 500px;
+  opacity: 1;
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  上传区域拖拽状态                                              │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.upload-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.upload-zone.dragging {
+  border-color: var(--accent-blue);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  滚动条样式                                                    │
+   └───────────────────────────────────────────────────────────────┘ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  结果列高亮                                                    │
+   └───────────────────────────────────────────────────────────────┘ */
+
+/* ┌───────────────────────────────────────────────────────────────┐
+   │  结果列样式 - 固定在右侧                                       │
+   └───────────────────────────────────────────────────────────────┘ */
+
+.result-column {
+  background: #ecfdf5 !important;
+  color: #059669;
+  font-weight: 600;
+}
+
+.result-header {
+  background: #d1fae5 !important;
+  color: #059669 !important;
+  border-bottom-color: #10b981 !important;
+}
